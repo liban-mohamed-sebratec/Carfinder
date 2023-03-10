@@ -11,20 +11,18 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Scanner;
-import java.util.stream.Collectors;;
+
+import static java.util.Comparator.comparing;
 
 @Service
 public class CarService {
-
     List<Car> cars = new ArrayList<>();
-    public List<Car> getCars(String car) throws IOException {
+    public List<Car> getCars(String car, String carModel) throws IOException {
 
-        String url = "https://bilweb.se/sok/" + car + "?type=1";
+        String url = "https://bilweb.se/sok/" + car + "/" + carModel + "?limit=1000";
         Document doc = Jsoup.connect(url).get();
         Elements carNameDescription = doc.getElementsByClass("Card-heading").select("a");
         Elements carDealer = doc.getElementsByClass("Card-firm").select("span");
-        Elements price = doc.getElementsByClass("Card-price").select("p");
         Elements section = doc.getElementsByClass("Card");
 
 
@@ -38,9 +36,21 @@ public class CarService {
                 String reg = regString.substring(0,6);
                 String type = CarDoc.getElementsByClass("u-marginAz u-textWeightLight").get(3).select("a").text();
                 String gearBox = CarDoc.getElementsByClass("u-marginAz u-textWeightLight").get(4).select("p").text();
-                String carYear = CarDoc.getElementsByClass("u-marginAz u-textWeightLight").get(6).select("p").text();
-                String a = price.get(i).text().replace(" kr", "");
-                Integer carPrice = Integer.parseInt(a.replace(" ", ""));
+                Integer carYear = null;
+
+                for(Element a : CarDoc.getElementsByClass("u-textXSmall u-textWeightMedium u-marginBz")){
+                    if(a.select("h5").text().contains("Årsmodell")){
+                       carYear = Integer.valueOf(a.nextElementSibling().text());
+                    }
+                }
+
+                Elements price = CarDoc.getElementsByClass("viewPrice").get(0).select("span");
+                String a = price.text().replace(" kr", "");
+                Integer carPrice = null;
+
+                if(a.contains(" ")){
+                    carPrice = Integer.valueOf(a.replace(" ", ""));
+                }
 
 
                 Elements loop = CarDoc.getElementsByClass("u-marginAz u-textWeightLight").select("p");
@@ -61,15 +71,36 @@ public class CarService {
             }
 
         }
+        System.out.println("Amount of cars scraped: " + cars.size());
         return cars;
     }
-    public List<Car> getCheapestCar(String carName) throws IOException {
-       List<Car>cheapestCars = getCars(carName).stream()
-                .sorted(Comparator.comparing(Car::getPrice, Comparator.comparing(Math::abs)))
-                .limit(1)
-                .toList();
-        return cheapestCars;
+    public List<Car> getCheapestCar() {
+        return cars.stream()
+                 .sorted(comparing(Car::getPrice, comparing(Math::abs)))
+                 .limit(3)
+                 .toList();
     }
 
+    public Integer getAvgPrice() {
+        Integer sum = 0;
+
+        for (Car i : cars){
+            sum += i.getPrice();
+        }
+        return sum / cars.size();
     }
+
+    public Integer getAvgPricePerYear(Integer year) {
+        Integer sum = 0;
+        List<Car> carList = new ArrayList<>();
+        for (Car car : cars){
+            if (car.getYear().equals(year)){
+                sum += car.getPrice();
+                carList.add(car);
+            }
+        }
+
+        return sum / carList.size();
+    }
+}
 

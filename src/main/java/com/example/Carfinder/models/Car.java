@@ -14,13 +14,13 @@ public class Car {
 
     String type;
     Integer price;
-    String year;
+    Integer year;
     String mileage;
     String reg;
     String gearBox;
     String dealer;
 
-    public Car(String name, String type, Integer price, String year, String mileage, String reg, String gearBox, String dealer) {
+    public Car(String name, String type, Integer price, Integer year, String mileage, String reg, String gearBox, String dealer) {
         this.name = name;
         this.type = type;
         this.price = price;
@@ -44,7 +44,7 @@ public class Car {
         return price;
     }
 
-    public String getYear() {
+    public Integer getYear() {
         return year;
     }
 

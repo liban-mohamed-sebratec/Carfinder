@@ -17,14 +17,25 @@ public class CarController {
     @Autowired
     private CarService carService;
 
-    @GetMapping("/{carName}")
-    public List<Car> getCars(@PathVariable("carName") String carName) throws IOException {
-        return carService.getCars(carName);
+    @GetMapping("/{carName}/{carModel}")
+    public List<Car> getCars(@PathVariable("carName") String carName, @PathVariable("carModel") String carModel) throws IOException {
+        return carService.getCars(carName, carModel);
     }
 
-    @GetMapping("/{carName}/cheapest")
-    public List<Car> getCheapestCar(@PathVariable("carName") String carName) throws IOException {
-        return carService.getCheapestCar(carName);
+    @GetMapping("/{carName}/{carModel}/cheapest")
+    public List<Car> getCheapestCar() throws IOException {
+        return carService.getCheapestCar();
     }
+
+    @GetMapping("/{carName}/{carModel}/avg-price")
+    public Integer getAvgPrice(){
+        return carService.getAvgPrice();
+    }
+
+    @GetMapping("/{carName}/{carModel}/{year}/avg-price")
+    public Integer getAvgPricePerYear(@PathVariable("year") Integer year){
+        return carService.getAvgPricePerYear(year);
+    }
+
 
 }
