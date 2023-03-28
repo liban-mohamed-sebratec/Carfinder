@@ -19,8 +19,9 @@ public class Car {
     String reg;
     String gearBox;
     String dealer;
+    String city;
 
-    public Car(String name, String type, Integer price, Integer year, String mileage, String reg, String gearBox, String dealer) {
+    public Car(String name, String type, Integer price, Integer year, String mileage, String reg, String gearBox, String dealer, String city) {
         this.name = name;
         this.type = type;
         this.price = price;
@@ -29,6 +30,7 @@ public class Car {
         this.reg = reg;
         this.gearBox = gearBox;
         this.dealer = dealer;
+        this.city = city;
     }
 
     public Integer getId() {
@@ -62,5 +64,9 @@ public class Car {
 
     public String getDealer() {
         return dealer;
+    }
+
+    public String getCity() {
+        return city;
     }
 }
